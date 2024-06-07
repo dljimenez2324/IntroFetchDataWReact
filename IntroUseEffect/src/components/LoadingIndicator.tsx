@@ -7,7 +7,7 @@ interface User {
     name: string
 }
 
-const FetchingAxios = () => {
+const LoadingIndicator = () => {
 
     // we need a useState to hold the state of the users from our FetchData  and we're making sure that the type is restricted to our interface type and we're saying User[] because we have an array so that we can add to it
     const [users, setUsers] = useState<User[]>([])
@@ -15,11 +15,24 @@ const FetchingAxios = () => {
     // in order for users  to see errors we will want another useState to hold these
     const [error, setError] = useState('')
 
+    // useState for our isLoading indicator
+    const [isLoading, setIsLoading] = useState(false)
+
     //Create a function using
     const FetchData = () => {
+
+        // here is the isloading
+        setIsLoading(true);
+
         axios.get("https://jsonplaceholder.typicode.com/users")
-        .then(response => setUsers(response.data))
-        .catch(error => setError(error.message))
+        .then(response => {
+            setUsers(response.data)
+            setIsLoading(false);  
+        } )
+        .catch(error => {
+            setError(error.message)
+            setIsLoading(false);
+        } )
     }
 
     
@@ -38,9 +51,12 @@ const FetchingAxios = () => {
         <ul>
             {users.map((user)=> <li key={user.id}>{user.name}</li>)}
             {error ? <p className="text-center text-danger">{error}</p>: null}
+
+            {/* lets add our loading thing here */}
+            {isLoading && <div className="spinner-border text-center"></div>}
         </ul>
     </>
   )
 }
 
-export default FetchingAxios
+export default LoadingIndicator
